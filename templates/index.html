@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>System Resource Monitor</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f0f0f0;
+            }
+            #charts {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .chart {
+                width: 600px;
+                height: 400px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="charts">
+            <div id="cpu-chart" class="chart"></div>
+            <div id="memory-chart" class="chart"></div>
+            <div id="disk-chart" class="chart"></div>
+        </div>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script>
+            async function fetchData() {
+                const response = await fetch('/api/resource');
+                return response.json();
+            }
+
+            function createChart(id, title) {
+                const svg = d3.select(`#${id}`).append('svg').attr('width', 600).attr('height', 400);
+
+                svg.append('text').attr('x', 300).attr('y', 20).attr('text-anchor', 'middle').style('font-size', '20px').text(title);
+
+                const data = [{ time: 0, value: 0 }];
+
+                const x = d3.scaleLinear().domain([0, 50]).range([0, 600]);
+                const y = d3.scaleLinear().domain([0, 100]).range([400, 0]);
+
+                const line = d3
+                    .line()
+                    .x((d) => x(d.time))
+                    .y((d) => y(d.value));
+
+                svg.append('g').attr('transform', 'translate(0, 380)').call(d3.axisBottom(x));
+
+                svg.append('g').attr('transform', 'translate(20, 0)').call(d3.axisLeft(y));
+
+                const path = svg.append('path').datum(data).attr('fill', 'none').attr('stroke', 'steelblue').attr('stroke-width', 1.5).attr('d', line);
+
+                function updateChart(newValue) {
+                    if (data.length >= 50) {
+                        data.shift();
+                        data.forEach((d) => d.time--);
+                    }
+                    data.push({ time: data.length, value: newValue });
+                    path.datum(data).attr('d', line);
+                }
+
+                return updateChart;
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const updateCpuChart = createChart('cpu-chart', 'CPU Usage');
+                const updateMemoryChart = createChart('memory-chart', 'Memory Usage');
+                const updateDiskChart = createChart('disk-chart', 'Disk Usage');
+
+                async function updateData() {
+                    const data = await fetchData();
+                    updateCpuChart(data.cpu);
+                    updateMemoryChart(data.memory);
+                    updateDiskChart(data.disk);
+                    setTimeout(updateData, 1000);
+                }
+
+                updateData();
+            });
+        </script>
+    </body>
+</html>

@@ -7,21 +7,23 @@ app = Flask(__name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
-@app.route('/api/resource')
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/api/resource")
 def resource():
     try:
         cpu = psutil.cpu_percent(interval=1)
         memory = psutil.virtual_memory().percent
-        disk = psutil.disk_usage('/').percent
+        disk = psutil.disk_usage("/").percent
         network = psutil.net_io_counters()
         swap = psutil.swap_memory().percent
-        cpu_freq = psutil.cpu_freq().current
-        cpu_cores = psutil.cpu_count(logical=False)
-        cpu_threads = psutil.cpu_count(logical=True)
+        cpu_freq = psutil.cpu_freq().current if psutil.cpu_freq() else 0
+        cpu_cores = psutil.cpu_count(logical=False) or 0
+        cpu_threads = psutil.cpu_count(logical=True) or 0
         load_avg = psutil.getloadavg()
         boot_time = psutil.boot_time()
         uptime = int(time.time() - boot_time)
@@ -36,11 +38,12 @@ def resource():
             cpu_cores=cpu_cores,
             cpu_threads=cpu_threads,
             load_avg=load_avg,
-            uptime=uptime
+            uptime=uptime,
         )
     except Exception as e:
         app.logger.error(f"Error fetching system resource data: {e}")
         return jsonify(error=str(e)), 500
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)

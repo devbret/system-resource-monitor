@@ -4,13 +4,13 @@
 
 A real-time system resource monitoring dashboard built with Flask, psutil, D3.js and JavaScript which continuously tracks and visualizes key machine performance metrics with a cyberpunk-styled interface.
 
-## Overview
+## Application Overview
 
-The Flask backend exposes an `/api/resource` endpoint for gathering live system data using the psutil library, then returns the data as JSON. On the frontend, D3.js renders multiple animated line charts which update every second, maintaining a rolling window of recent values to display trends over time. Together, the backend and frontend create a visually engaging, continuously updating performance dashboard for monitoring system health in real time.
+The Flask backend provides an `/api/resource` endpoint which collects system resource data with the `psutil` library and returns it as JSON. On the frontend, JavaScript fetches the JSON data from the backend and uses D3.js to render line charts for each measurement. The charts update repeatedly in the browser and keep a rolling window of recent values, creating a live dashboard for viewing system resource activity over time.
 
-## Set Up
+## Basic Setup Instructions
 
-Below are instructions for setting this app on your computer.
+Below are instructions for setting up this app on a Linux computer.
 
 ### Programs Needed
 
@@ -24,26 +24,32 @@ Below are instructions for setting this app on your computer.
 
 2. Open a terminal
 
-3. Clone this repository using `git` by running the following command: `git clone git@github.com:devbret/system-resource-monitor.git`
+3. Clone this repository: `git clone git@github.com:devbret/system-resource-monitor.git`
 
-4. Navigate to the repo's directory by running: `cd system-resource-monitor`
+4. Navigate to the repo's directory: `cd system-resource-monitor`
 
-5. Install the needed dependencies for running the script by using the following command: `pip install -r requirements.txt`
+5. Create a virtual environment: `python3 -m venv venv`
 
-6. Run the script with the command `python3 app.py`
+6. Activate the virtual environment: `source venv/bin/activate`
 
-7. Open the link the Flask server generates for you, this will bring you to the system resource monitoring app
+7. Install the needed dependencies: `pip install -r requirements.txt`
 
-8. You can now see nine different measurements being updated every second in their respective graph(s)
+8. Run the Python script `python3 app.py`
+
+9. Open the application in a browser: `http://localhost:5000`
+
+10. When finished, stop the Flask server: `CTRL + C`
+
+11. Exit the virtual environment: `deactivate`
 
 ## Other Considerations
 
 This project repo is intended to demonstrate an ability to do the following:
 
-- Collect real-time system metrics using Python and serves them via a Flask API
+- Monitor key system resources on a Linux computer and display them as a dashboard via their browser of choice
 
-- Implement visualizations with D3.js to track system performance metrics over time
+- Use `Flask`, Python, `psutil`, JavaScript and D3.js to visualize live system performance data
 
-- Structure a Flask application using templates and static assets
+- Help users quickly view and track their computer’s resource usage through an automatically updating web interface
 
 If you have any questions or would like to collaborate, please reach out either on GitHub or via [my website](https://bretbernhoft.com/).

@@ -52,3 +52,21 @@ svg text {
   text-align: center;
   margin-bottom: 10px;
 }
+
+.status {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 10px 20px;
+  background-color: #2b0b0b;
+  border-bottom: 2px solid #ff4d4d;
+  color: #ff9c9c;
+  font-size: 16px;
+  text-align: center;
+}
+
+.status[hidden] {
+  display: none;
+}

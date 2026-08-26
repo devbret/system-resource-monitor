@@ -1,6 +1,37 @@
+const POLL_INTERVAL_MS = 1000;
+const RETRY_INTERVAL_MS = 2000;
+const REQUEST_TIMEOUT_MS = 8000;
+
 async function fetchData() {
-  const response = await fetch("/api/resource");
-  return response.json();
+  const response = await fetch("/api/resource", {
+    signal: AbortSignal.timeout
+      ? AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+      : undefined,
+  });
+
+  if (!response.ok) {
+    throw new Error(`server responded ${response.status}`);
+  }
+
+  const payload = await response.json();
+
+  if (payload.error) {
+    throw new Error(payload.error);
+  }
+
+  return payload;
+}
+
+function setStatus(message) {
+  const status = document.getElementById("status");
+  if (!status) return;
+
+  if (message) {
+    status.textContent = `Disconnected: ${message} - retrying...`;
+    status.hidden = false;
+  } else {
+    status.hidden = true;
+  }
 }
 
 function createChart(id, title, valueId, yDomain = [0, 100]) {
@@ -72,6 +103,10 @@ function createChart(id, title, valueId, yDomain = [0, 100]) {
     .attr("d", line);
 
   function updateChart(newValue) {
+    if (typeof newValue !== "number" || !Number.isFinite(newValue)) {
+      return;
+    }
+
     if (data.length >= 50) {
       data.shift();
       data.forEach((d) => d.time--);
@@ -128,19 +163,31 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   async function updateData() {
-    const data = await fetchData();
+    let delay = POLL_INTERVAL_MS;
 
-    updateCpuChart(data.cpu);
-    updateMemoryChart(data.memory);
-    updateDiskChart(data.disk);
-    updateSwapChart(data.swap);
-    updateCpuFreqChart(data.cpu_freq);
-    updateCpuCoresChart(data.cpu_cores);
-    updateCpuThreadsChart(data.cpu_threads);
-    updateLoadAvgChart(data.load_avg[0]);
-    updateUptimeChart(data.uptime);
+    try {
+      const data = await fetchData();
 
-    setTimeout(updateData, 1000);
+      updateCpuChart(data.cpu);
+      updateMemoryChart(data.memory);
+      updateDiskChart(data.disk);
+      updateSwapChart(data.swap);
+      updateCpuFreqChart(data.cpu_freq);
+      updateCpuCoresChart(data.cpu_cores);
+      updateCpuThreadsChart(data.cpu_threads);
+      updateLoadAvgChart(
+        Array.isArray(data.load_avg) ? data.load_avg[0] : undefined,
+      );
+      updateUptimeChart(data.uptime);
+
+      setStatus(null);
+    } catch (error) {
+      console.error("Failed to update system resource data:", error);
+      setStatus(error.message || "request failed");
+      delay = RETRY_INTERVAL_MS;
+    } finally {
+      setTimeout(updateData, delay);
+    }
   }
 
   updateData();

@@ -50,6 +50,6 @@ This project repo is intended to demonstrate an ability to do the following:
 
 - Use `Flask`, Python, `psutil`, JavaScript and D3.js to visualize live system performance data
 
-- Help users quickly view and track their computer’s resource usage through an automatically updating web interface
+- Help users quickly view and track their computer's resource usage through an automatically updating web interface
 
 If you have any questions or would like to collaborate, please reach out either on GitHub or via [my website](https://bretbernhoft.com/).

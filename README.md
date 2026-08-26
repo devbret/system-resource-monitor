@@ -44,6 +44,10 @@ Below are instructions for setting up this app on a Linux computer.
 
 ## Other Considerations
 
+The subsections below outline the specific skills this repository is meant to showcase, followed by reference to the terms under which its code may be reused and redistributed. You will also find information on how to contact the maintainer with questions, suggestions and collaboration opportunities.
+
+### Abilities Demonstrated
+
 This project repo is intended to demonstrate an ability to do the following:
 
 - Monitor key system resources on a Linux computer and display them as a dashboard via their browser of choice
@@ -51,5 +55,9 @@ This project repo is intended to demonstrate an ability to do the following:
 - Use `Flask`, Python, `psutil`, JavaScript and D3.js to visualize live system performance data
 
 - Help users quickly view and track their computer's resource usage through an automatically updating web interface
+
+### License Information
+
+This project is released under the [MIT License](LICENSE). You are free to use, copy, modify, merge, publish, distribute, sublicense and sell copies of this software, including within commercial. However, the original copyright and permission notices must be present in all copies or substantial portions of the software. Please also note the software is provided "as is", without warranty of any kind, and that the author accepts no liability for any claim or damages arising from its use.
 
 If you have any questions or would like to collaborate, please reach out either on GitHub or via [my website](https://bretbernhoft.com/).

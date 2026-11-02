@@ -10,7 +10,10 @@ async function fetchData() {
   });
 
   if (!response.ok) {
-    throw new Error(`server responded ${response.status}`);
+    const body = await response.json().catch(() => null);
+    throw new Error(
+      body && body.error ? body.error : `server responded ${response.status}`,
+    );
   }
 
   const payload = await response.json();
